@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave Logs</title>
+</head>
+<body>
+    <h1>Leave Logs</h1>
+    <table border="1">
+        <tr>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Days Taken</th>
+            <th>Hours Requested</th>
+            <th>Remaining Balance</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log['Start Date'] }}</td>
+            <td>{{ log['End Date'] }}</td>
+            <td>{{ log['Days Taken'] }}</td>
+            <td>{{ log['Hours Requested'] }}</td>
+            <td>{{ log['Remaining Balance'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/">Back to Home</a>
+</body>
+</html>

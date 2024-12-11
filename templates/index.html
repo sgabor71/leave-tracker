@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Tracker</title>
+</head>
+<body>
+    <h1>Leave Tracker</h1>
+    
+    <!-- Leave Request Form -->
+    <form method="POST" action="/">
+        <h2>Request Leave</h2>
+        <label for="start_date">Start Date (YYYY-MM-DD):</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date if warning is not none else '' }}" required><br><br>
+        
+        <label for="end_date">End Date (YYYY-MM-DD):</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date if warning is not none else '' }}" required><br><br>
+        
+        <label for="hours_requested">Hours Requested:</label>
+        <input type="number" id="hours_requested" name="hours_requested" step="0.5" min="0" placeholder="Hours" value="{{ hours_requested if warning is not none else '' }}"><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    
+    {% if warning %}
+    <p style="color: orange;">{{ warning }}</p>
+    <form method="POST" action="{{ url_for('proceed_with_request') }}">
+        <input type="hidden" name="start_date" value="{{ start_date }}">
+        <input type="hidden" name="end_date" value="{{ end_date }}">
+        <input type="hidden" name="hours_requested" value="{{ hours_requested }}">
+        <button type="submit" name="confirm" value="true">Yes, Proceed with Request</button>
+        <button type="button" onclick="window.location.href='{{ url_for('home') }}'">No, Cancel</button>
+    </form>
+    {% endif %}
+
+
+    <!-- Leave Summary -->
+    <h2>Leave Request Summary</h2>
+    <p><strong>Remaining Balance:</strong> {{ remaining_balance }} hours</p>
+    
+    <table border="1">
+        <tr>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Hours Requested</th>
+            <th>Days Taken</th>
+            <th>Date Requested</th>
+            <th>Action</th>
+        </tr>
+        {% for request in leave_requests %}
+        <tr>
+            <td>{{ request[1] }}</td>
+            <td>{{ request[2] }}</td>
+            <td>{{ request[3] }}</td>
+            <td>{{ request[4] }}</td>
+            <td>{{ request[5] }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('delete_request', request_id=request[0]) }}" onsubmit="return confirm('Are you sure you want to delete this leave request?');">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <form method="POST" action="/reset" onsubmit="return confirm('Are you sure you want to reset the leave summary?');">
+        <button type="submit" style="color: red;">Reset Leave Summary</button>
+    </form>
+
+    <!-- Custom Leave Hours Form -->
+    <h3>Update Default Leave Hours</h3>
+    <form method="POST">
+        <h4>Set custom hours for each day:</h4>
+        {% for day, hours in weekday_hours.items() %}
+        <label for="day_{{ day }}">
+            {{ 'Monday' if day == 0 else 'Wednesday' if day == 2 else 'Thursday' if day == 3 else 'Friday' }}:
+        </label>
+        <input type="number" name="day_{{ day }}" value="{{ hours }}" step="0.5" min="0"><br><br>
+        {% endfor %}
+        <button type="submit" name="update_hours">Update Hours</button>
+    </form>
+
+    <!-- Manually Update Remaining Balance -->
+    <h3>Update Remaining Leave Balance</h3>
+    <form method="POST">
+        <label for="new_balance">New Remaining Balance:</label>
+        <input type="number" id="new_balance" name="new_balance" step="0.5" min="0" placeholder="Enter new balance"><br><br>
+        <button type="submit" name="update_balance" onclick="return confirm('Are you sure you want to update the leave balance? This action cannot be undone.');">Update Balance</button>
+    </form>
+</body>
+</html>

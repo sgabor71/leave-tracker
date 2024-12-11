@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Summary</title>
+</head>
+<body>
+    <h1>Leave Request Summary</h1>
+    <p><strong>Remaining Balance:</strong> {{ remaining_balance }}</p>
+    <h2>Leave Requests</h2>
+    <table border="1">
+        <tr>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Hours Requested</th>
+            <th>Days Taken</th>
+            <th>Date Requested</th>
+        </tr>
+        {% for request in leave_requests %}
+        <tr>
+            <td>{{ request[0] }}</td>
+            <td>{{ request[1] }}</td>
+            <td>{{ request[2] }}</td>
+            <td>{{ request[3] }}</td>
+            <td>{{ request[4] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/">Go Back</a>
+</body>
+</html>
